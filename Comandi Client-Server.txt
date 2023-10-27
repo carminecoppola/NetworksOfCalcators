@@ -1,7 +1,7 @@
 Comandi Client-Server
 
-gcc nomeFileServer.c -server
-gcc nomeFileClient.c -client
+gcc nomeFileServer.c -o server
+gcc nomeFileClient.c -o client
 
 ./server&
 ./client 127.0.0.1

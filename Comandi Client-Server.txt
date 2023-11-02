@@ -6,3 +6,14 @@ gcc nomeFileClient.c -o client
 ./server&
 ./client 127.0.0.1
 
+
+Per uccidere i processi:
+
+ps-a
+
+ps -ax
+
+ps -ax | grep server
+
+kill -9 nomeProcesso
+

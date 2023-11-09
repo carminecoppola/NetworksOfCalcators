@@ -11,14 +11,14 @@
 
 
 ssize_t FullWrite(int fd, const void *buf, size_t count);
+int num_client = 0;
 
-void signalHandler(int signum)
+void signalHandler(int num_segnale)
 {
-  printf("Sei il client , la data locale è: \n");
+    if(num_segnale == SIGCHLD)
+        num_client++;
 }
 
-
-int client_serviti = 0;
 
 int main (int argc , char *argv[]){
 
@@ -30,12 +30,13 @@ int main (int argc , char *argv[]){
     time_t timeval;
     pid_t pid;
     int logging =1;
-
-
+    
+    signal(SIGCHLD, signalHandler);
+    
     if ( ( list_fd = socket(AF_INET, SOCK_STREAM, 0) ) < 0 ) {
         perror("socket");
         exit(1);
-        }
+    }
 
     serv_add.sin_family      = AF_INET;
     serv_add.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -53,44 +54,46 @@ int main (int argc , char *argv[]){
     }
 
 
- while(1)
-	{
-	 len = sizeof ( client );
-	 if ( ( conn_fd = accept(list_fd, (struct sockaddr *) NULL, NULL) ) < 0 ) {
-        	perror("accept");
-        	exit(1);
+    while(1)
+    {
+        len = sizeof ( client );
+        if ( ( conn_fd = accept(list_fd, (struct sockaddr *) NULL, NULL)) < 0 ){
+            perror("accept");
+            exit(1);
         }
 
-	 /* fork to handle connection */
-	 if( (pid = fork()) < 0){
-		 perror (" fork error ");
-		 exit (-1);
-		}
+        /* fork to handle connection */
+        if( (pid = fork()) < 0 ){
+            perror(" fork error ");
+            exit(-1);
+        }
 
-	 if(pid == 0)
-		{ /* child */
-		 close ( list_fd );
-		 timeval = time ( NULL );
-		 snprintf(buffer,sizeof(buffer)," %.24s\r\n",ctime(& timeval));
+        if(pid == 0)
+        { 
+            /* child */
+            close ( list_fd );
+            timeval = time ( NULL );
+            snprintf(buffer,sizeof(buffer),"\nSei il client numero #%d, la data è: %.24s\r\n\n", num_client, ctime(& timeval));
 
-		 FullWrite(conn_fd, buffer, sizeof(buffer));
-		 
- 		 if(logging)
-			{
-			 inet_ntop(AF_INET,&client.sin_addr,buffer,sizeof(buffer));
-			 printf("Request from host %s, port %d\n",buffer,ntohs(client.sin_port));
-			}
- 		 close (conn_fd);
- 		 exit (0);
-		}
-	 else 
-		{ /* parent */
-            signal(SIGINT,signalHandler);
-		    close ( conn_fd );
-		}
-	}
- /* normal exit , never reached */
- exit (0);
+            FullWrite(conn_fd, buffer, sizeof(buffer));
+            
+            if( logging )
+            {
+                inet_ntop(AF_INET,&client.sin_addr,buffer,sizeof(buffer));
+                printf("Request from host %s, port %d\n",buffer,ntohs(client.sin_port));
+            }
+
+            close (conn_fd); 
+            exit (0);
+        }
+        else /* parent */
+        { 
+            close ( conn_fd );
+        }
+    }
+    
+    /* normal exit , never reached */
+    exit (0);
 }
 
 ssize_t FullWrite(int fd, const void *buf, size_t count)  

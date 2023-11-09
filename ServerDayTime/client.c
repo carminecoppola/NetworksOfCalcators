@@ -73,7 +73,6 @@ ssize_t FullRead(int fd, void *buf, size_t count)
   }
 
   buf = 0; 
-  printf("%lu",nleft);
   
   return (nleft); 
 }

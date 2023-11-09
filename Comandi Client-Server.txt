@@ -1,19 +1,43 @@
-Comandi Client-Server
+Comandi per l'esecuzione del server e del client:
 
-gcc nomeFileServer.c -o server
-gcc nomeFileClient.c -o client
+Per avviare il server, compila il file sorgente del server (nomeFileServer.c) e il file sorgente 
+del client (nomeFileClient.c) con il compilatore GCC e fornisci loro nomi significativi :
 
-./server&
-./client 127.0.0.1
+    - gcc nomeFileServer.c -o server
+    - gcc nomeFileClient.c -o client
 
+Questi comandi compileranno i file sorgente in eseguibili con i nomi "server" e "client".
 
-Per uccidere i processi:
+Per avviare il server, esegui il seguente comando, che avvierà il server in background:
 
-ps-a
+    - ./server &
 
-ps -ax
+Per avviare il client e connetterlo al server, esegui il seguente comando, specificando 
+l'indirizzo IP del server (nel caso dell'esempio, è "127.0.0.1"):
 
-ps -ax | grep server
+    - ./client 127.0.0.1
 
-kill -9 nomeProcesso
+Comandi per l'uccisione dei processi:
 
+Per elencare tutti i processi in esecuzione, puoi utilizzare uno dei seguenti comandi:
+
+    - ps -a
+    - ps -ax
+
+Per identificare il processo del server, puoi filtrare l'output utilizzando il comando 
+"grep" in questo modo:
+
+    - ps -ax | grep server
+
+Questo comando ti fornirà il nome del processo associato al server.
+
+Per uccidere un processo, usa il comando "kill -9" seguito dal nome del processo. 
+Ad esempio:
+
+    - kill -9 nomeProcesso
+
+Per eseeguire il for da terminale:
+
+    - for i in {1..5} 
+    - do ./client 127.0.0.1
+    - done

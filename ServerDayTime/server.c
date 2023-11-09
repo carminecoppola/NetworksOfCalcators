@@ -1,99 +1,59 @@
-#include<sys/types.h> /* predefined types */
-#include<unistd.h> /* include unix standard library */
-#include<arpa/inet.h> /* IP addresses conversion utililites */
-#include<sys/socket.h> /* socket library */
-#include<stdio.h> /* include standard I/O library */
-#include <stdlib.h>
-#include <string.h>
-#include<time.h>
-#include <errno.h>
-#include<signal.h>
+/*
+Traccia:
+    1) Modificare il client daytime in modo che accetti anche nomi simbolici come parametro;
 
+    2) Modificare il server daytime in modo che visualizzi sullo standard output l'hostname 
+       dei client che lo contattano;
+*/
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <time.h>
+#include <errno.h>
 
 ssize_t FullWrite(int fd, const void *buf, size_t count);
-int num_client = 0;
 
-void signalHandler(int num_segnale)
+int main(int argc, char **argv)
 {
-    if(num_segnale == SIGCHLD)
-        num_client++;
-}
+    int          listenfd, connfd;
+    struct sockaddr_in  servaddr;
+    char        buff[4096];
+    time_t        ticks;  
 
-
-int main (int argc , char *argv[]){
-
-    int list_fd,conn_fd;
-    int i;
-    struct sockaddr_in serv_add,client;
-    char buffer [1024];
-    socklen_t len;
-    time_t timeval;
-    pid_t pid;
-    int logging =1;
-    
-    signal(SIGCHLD, signalHandler);
-    
-    if ( ( list_fd = socket(AF_INET, SOCK_STREAM, 0) ) < 0 ) {
+    if ( ( listenfd = socket(AF_INET, SOCK_STREAM, 0) ) < 0 ) {
         perror("socket");
         exit(1);
     }
 
-    serv_add.sin_family      = AF_INET;
-    serv_add.sin_addr.s_addr = htonl(INADDR_ANY);
-    serv_add.sin_port        = htons(1024);
+    servaddr.sin_family      = AF_INET;
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    servaddr.sin_port        = htons(1024);
 
-    if ( bind(list_fd, (struct sockaddr *) &serv_add, sizeof(serv_add)) < 0 ) {
+    if ( bind(listenfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0 ) {
         perror("bind");
         exit(1);
     }
- 
-
-	if ( listen(list_fd, 1024) < 0 ) {
+    if ( listen(listenfd, 1024) < 0 ) {
         perror("listen");
         exit(1);
     }
-
-
-    while(1)
-    {
-        len = sizeof ( client );
-        if ( ( conn_fd = accept(list_fd, (struct sockaddr *) NULL, NULL)) < 0 ){
+    for ( ; ; ) {
+        if ( ( connfd = accept(listenfd, (struct sockaddr *) NULL, NULL) ) < 0 ) {
             perror("accept");
             exit(1);
         }
+        ticks = time(NULL);
+        snprintf(buff, sizeof(buff), "%.24s\r\n", ctime(&ticks));
 
-        /* fork to handle connection */
-        if( (pid = fork()) < 0 ){
-            perror(" fork error ");
-            exit(-1);
-        }
+        FullWrite(connfd, buff, sizeof(buff));
 
-        if(pid == 0)
-        { 
-            /* child */
-            close ( list_fd );
-            timeval = time ( NULL );
-            snprintf(buffer,sizeof(buffer),"\nSei il client numero #%d, la data è: %.24s\r\n\n", num_client, ctime(& timeval));
-
-            FullWrite(conn_fd, buffer, sizeof(buffer));
-            
-            if( logging )
-            {
-                inet_ntop(AF_INET,&client.sin_addr,buffer,sizeof(buffer));
-                printf("Request from host %s, port %d\n",buffer,ntohs(client.sin_port));
-            }
-
-            close (conn_fd); 
-            exit (0);
-        }
-        else /* parent */
-        { 
-            close ( conn_fd );
-        }
+        close(connfd);
     }
-    
-    /* normal exit , never reached */
-    exit (0);
 }
 
 ssize_t FullWrite(int fd, const void *buf, size_t count)  

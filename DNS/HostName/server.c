@@ -74,5 +74,4 @@ ssize_t FullWrite(int fd, const void *buf, size_t count)
             buf += nwritten;
         }    
     } 
-    return (nleft); 
-}
+    return (nleft);

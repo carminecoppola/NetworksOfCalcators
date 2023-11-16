@@ -1,12 +1,18 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<unistd.h>
-#include<sys/types.h>
-#include<sys/socket.h>
-#include<arpa/inet.h>
-#include<errno.h>
-#include<signal.h>
-#include<netdb.h>
+/*
+    Modificare il client daytime in modo che accetti anche nomi simbolici come parametro
+    
+    Modificare il server daytime in modo che visualizzi sullo standard output l'hostname dei client che lo contattano
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <errno.h>
+#include <signal.h>
+#include <netdb.h>
 
 
 ssize_t FullRead(int fd, void *buf, size_t count);
@@ -33,7 +39,7 @@ int main(int argc, char **argv){
   servaddr.sin_port   = htons(1024);
 
 
-  struct hostent *addr = gethostbyaddr((const char*)argv[1],servaddr.sin_len,servaddr.sin_family);
+  struct hostent *addr = gethostbyaddr((const char *)argv[1], sizeof(servaddr), servaddr.sin_family);
 
   if (inet_pton(AF_INET, (char*)addr, &servaddr.sin_addr) < 0) {
     fprintf(stderr,"inet_pton error for %s\n", argv[1]);

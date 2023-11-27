@@ -1,8 +1,6 @@
 /* Traccia:
-    Dato il server concorrente che accetta in input stringhe dai client e
-    restituisce il numero di caratteri per stringa si modifichi il client
-    relativo in modo che gestista lo standard input e il socket di
-    connessione con il server mediante I/O mutliplex
+    Si riscriva il server che conta i caratteri in modo che gestisca
+    le connessioni mediante I/O mutliplex
 */
 
 #include <stdio.h>

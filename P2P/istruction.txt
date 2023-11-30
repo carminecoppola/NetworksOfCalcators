@@ -1,0 +1,6 @@
+Per eserguire la connessione Peer To Peer esegui questi comandi ed è necessario che siano conosciute le porte:
+
+    gcc peer.c -o peer1
+    gcc peer.c -o peer2
+    ./peer1
+    ./peer2

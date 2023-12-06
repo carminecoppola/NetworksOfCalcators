@@ -1,54 +1,53 @@
 # NetworksOfCalcators
 
-Questo repository contiene una serie di esercizi del corso di Reti dei Calcolatori implementati in linguaggio C. Ogni esercizio è organizzato in una cartella separata, contenente sia il codice del client che del server, oppure una connessione peer-to-peer.
+This repository contains a series of exercises from the Computer Networks course implemented in the C language. Each exercise is organized in a separate folder, containing both the client and server code, or a peer-to-peer connection.
 
-## Comandi per l'esecuzione del server e del client
+## Commands for running the server and client
 
-Prima di eseguire il server e il client, assicurati di compilare i file sorgenti utilizzando il compilatore GCC. Fornisci loro nomi significativi:
+Before running the server and client, make sure to compile the source files using the GCC compiler. Provide them with meaningful names:
 
   ```
   gcc nomeFileServer.c -o server
   gcc nomeFileClient.c -o client
   ```
 
-Questi comandi compileranno i file sorgenti in eseguibili con i nomi "server" e "client".
+These commands will compile the source files into executables with the names "server" and "client."
 
-Per avviare il server, esegui il seguente comando che avvierà il server in background:
+To start the server, run the following command to launch the server in the background:
 
   ```
   ./server &
   ```
 
-Per avviare il client e connetterlo al server, esegui il seguente comando, specificando l'indirizzo IP del server (nel caso dell'esempio, è "127.0.0.1"):
+To start the client and connect it to the server, run the following command, specifying the server's IP address (in the example, it is "127.0.0.1"):
 
   ```
   ./client 127.0.0.1
   ```
 
-## Comandi per l'uccisione dei processi
+## Commands for killing processes
 
-Per elencare tutti i processi in esecuzione, puoi utilizzare uno dei seguenti comandi:
+To list all running processes, you can use one of the following commands:
 
   ```
   ps -a
   ps -ax
   ```
-Per identificare il processo del server, puoi filtrare l'output utilizzando il comando "grep" in questo modo:
+To identify the server process, you can filter the output using the "grep" command like this:
 
   ```
   ps -ax | grep server
   ```
-Questo comando ti fornirà il nome del processo associato al server.
+This command will provide you with the process name associated with the server.
 
-Per uccidere un processo, usa il comando "kill -9" seguito dal nome del processo. Ad esempio:
+To kill a process, use the "kill -9" command followed by the process name. For example:
 
   ```
   kill -9 nomeProcesso
   ```
-## Esecuzione di comandi multipli con il loop "for"
+## Running multiple commands with the "for" loop
 
-Per eseguire il client ripetutamente da terminale, puoi utilizzare un ciclo "for". Ecco un esempio:
-
+To run the client repeatedly from the terminal, you can use a "for" loop. Here's an example:
   ```
   for i in {1..5}
   do
@@ -56,4 +55,4 @@ Per eseguire il client ripetutamente da terminale, puoi utilizzare un ciclo "for
   done
   ```
 
-Questo eseguirà il client cinque volte, connettendolo al server con l'indirizzo IP "127.0.0.1".
+This will run the client five times, connecting it to the server with the IP address "127.0.0.1".
